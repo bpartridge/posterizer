@@ -1,3 +1,6 @@
+set -e
+coffee -c _attachments/js/main
+
 osascript <<'AS'
 tell application "Google Chrome"
 	activate

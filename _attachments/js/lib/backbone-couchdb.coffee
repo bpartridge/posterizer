@@ -70,7 +70,9 @@ Backbone.couch_connector = con =
         opts.success _temp
       error : ->
         opts.error()
-    
+    if opts.group or coll.db.group
+      _opts.group = true
+
     # delete keys if a custom view is requested but no custom keys 
     if coll.db? and coll.db.view? and not coll.db.keys?
       delete _opts.keys

@@ -29,7 +29,8 @@
         TasksWithEventCounts.__super__.constructor.apply(this, arguments);
       }
       TasksWithEventCounts.prototype.db = {
-        view: 'tasks_with_event_counts'
+        view: 'tasks_with_event_counts',
+        group: true
       };
       TasksWithEventCounts.prototype.url = '/tasks_with_event_counts';
       TasksWithEventCounts.prototype.model = Task;
@@ -150,9 +151,7 @@
         App.__super__.constructor.apply(this, arguments);
       }
       App.prototype.initialize = function() {
-        return tasksWithEventCounts.fetch({
-          group: true
-        });
+        return tasksWithEventCounts.fetch();
       };
       return App;
     })();

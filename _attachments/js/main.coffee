@@ -13,6 +13,7 @@ $ ->
 	class TasksWithEventCounts extends Backbone.Collection
 		db:
 			view: 'tasks_with_event_counts'
+			group: true
 		url: '/tasks_with_event_counts'
 		model: Task
 		comparator: (task) -> return task.get 'title'
@@ -68,8 +69,7 @@ $ ->
 	
 	class App extends Backbone.Router
 		initialize: ->
-			tasksWithEventCounts.fetch
-				group: true
+			tasksWithEventCounts.fetch()
 	
 	new App()
 	new TaskTableView

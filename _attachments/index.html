@@ -4,36 +4,68 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<title>jQuery Mobile: Demos and Documentation</title> 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
-  <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
-  <script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.6.2.js"></script>
+  <script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.js"></script>
 </head>
 <body>
-  <div data-role="page" id="home">
+  <div data-role="page" id="home" data-theme="a">
     <div data-role="header">
       <h1>Posterizer V2</h1>
-    </div><!-- header -->
-  	<div data-role="content">
+    </div>
+  	<div data-role="content" class="content">
   	  <h2>Loading...</h2>
-  	  <a href="#tasks">Home</a>
+  	  <ul data-role="listview" data-inset="true" data-theme="a">
+  	    <li><a href="#tasks">
+  	      Postering Tasks
+  	    </a></li>
+  	    <li><a href="#activity">
+  	      Recent Activity <span class="ui-li-aside">Live updates!</span>
+  	    </a></li>
+  	    <li><a href="#login">
+  	      Choose User
+  	    </a></li>
+  	  </ul>
   	</div>
   </div><!-- page id="home" -->
   
-  <div data-role="page" id="tasks">
+  <div data-role="page" id="tasks" data-theme="a">
     <div data-role="header">
-      <h1>Posterizer V2: Tasks</h1>
-    </div><!-- header -->
-    <div data-role="content">
-      <ul id="task-table">
+      <a href="#home" data-direction="reverse" data-icon="home">Home</a>
+      <h1>Postering Tasks</h1>
+    </div>
+    <div data-role="content" data-filter="true" class="content">
+      <ul id="task-table" data-role="listview" data-theme="a">
+      </ul>
+    </div>
+  </div><!-- page id="tasks" -->
+  
+  <div data-role="page" id="add-activity" data-theme="a">
+    <div data-role="header">
+      <a href="#tasks" data-rel="back" data-icon="delete">Cancel</a>
+      <h1>Did you poster here?</h1>
+    </div>
+    <div data-role="content" class="content">
+    </div>
+  </div><!-- page id="add-event" -->
+  
+  <div data-role="page" id="activity" data-theme="a">
+    <div data-role="header">
+      <h1>Recent Activity</h1>
+    </div>
+    <div data-role="content" data-filter="true" class="content">
+      <ul id="activity">
       </ul>
     </div>
   </div>
   
   <div id="templates" style="display:none">
     <li id="task-table-entry-template">
-      <span class="title">{{title}}</span>
-      <span class="count">{{eventCount}}</span>
+      <a href="#add-activity">
+        <span class="title">{{title}}</span>
+        <span class="ui-li-count">{{eventCount}}</span>
+      </a>
     </li>
-  </div>
+  </div><!-- templates -->
 
   <!-- JavaScript at the bottom for fast page loading -->
 

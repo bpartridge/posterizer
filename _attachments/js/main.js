@@ -8,10 +8,28 @@
     return child;
   }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   $(function() {
-    var App, Task, TaskEvent, TaskTableEntryView, TaskTableView, TasksWithEventCounts, UpdatingCollectionView, tasksWithEventCounts;
+    var HomeView, Task, TaskEvent, TaskTableEntryView, TaskTableView, TasksWithEventCounts, UpdatingCollectionView, app, tasksWithEventCounts;
     Backbone.couch_connector.config.db_name = 'posters';
     Backbone.couch_connector.config.ddoc_name = 'app';
     _.templateSettings = {interpolate : /\{\{(.+?)\}\}/g};
+    app = {
+      activePage: function() {
+        return $(".ui-page-active").get(0);
+      },
+      reapplyStyles: function(el) {
+        el.find('ul[data-role]').listview();
+        el.find('div[data-role="fieldcontain"]').fieldcontain();
+        el.find('button[data-role="button"]').button();
+        el.find('input,textarea').textinput();
+        return el.page();
+      },
+      redirectTo: function(page) {
+        return $.mobile.changePage(page);
+      },
+      goBack: function() {
+        return $.historyBack();
+      }
+    };
     Task = (function() {
       __extends(Task, Backbone.Model);
       function Task() {
@@ -128,12 +146,20 @@
     TaskTableEntryView = (function() {
       __extends(TaskTableEntryView, Backbone.View);
       function TaskTableEntryView() {
+        this.render = __bind(this.render, this);
         TaskTableEntryView.__super__.constructor.apply(this, arguments);
       }
-      TaskTableEntryView.prototype.tagName = 'div';
+      TaskTableEntryView.prototype.tagName = $('#task-table-entry-template')[0].nodeName;
+      TaskTableEntryView.prototype.template = _.template($('#task-table-entry-template').html());
       TaskTableEntryView.prototype.initialize = function(options) {
         TaskTableEntryView.__super__.initialize.call(this, options);
-        return console.log(this, this.model, options);
+        return this.render();
+      };
+      TaskTableEntryView.prototype.render = function() {
+        var content;
+        console.log("Rendering", this, "to", this.el);
+        content = this.model.toJSON();
+        return $(this.el).html(this.template(content));
       };
       return TaskTableEntryView;
     })();
@@ -143,22 +169,30 @@
         TaskTableView.__super__.constructor.apply(this, arguments);
       }
       TaskTableView.prototype.childViewConstructor = TaskTableEntryView;
+      TaskTableView.prototype.initialize = function(options) {
+        TaskTableView.__super__.initialize.call(this, options);
+        this.el = app.activePage();
+        return this.render();
+      };
       return TaskTableView;
     })();
-    App = (function() {
-      __extends(App, Backbone.Router);
-      function App() {
-        App.__super__.constructor.apply(this, arguments);
+    HomeView = (function() {
+      __extends(HomeView, Backbone.View);
+      function HomeView() {
+        this.render = __bind(this.render, this);
+        HomeView.__super__.constructor.apply(this, arguments);
       }
-      App.prototype.initialize = function() {
-        return tasksWithEventCounts.fetch();
+      HomeView.prototype.el = $('#home');
+      HomeView.prototype.initialize = function(options) {
+        HomeView.__super__.initialize.call(this, options);
+        this.el = app.activePage();
+        return this.render();
       };
-      return App;
+      HomeView.prototype.render = function() {
+        return this.$('[data-role=content]').text('Loaded');
+      };
+      return HomeView;
     })();
-    new App();
-    return new TaskTableView({
-      collection: tasksWithEventCounts,
-      el: $('#main')
-    });
+    return Backbone.history.start();
   });
 }).call(this);

@@ -237,6 +237,14 @@ class ActivityView extends UpdatingCollectionView
   childViewName: 'ActivityEntryView'
 
 class ActivityUtilsView extends Backbone.View
+  initialize: ->
+    super(arguments)
+    @render()
+  render: =>
+    if window.location.href.indexOf("%20cooler") == -1
+      $('#activity-delete-all').hide()
+      if window.location.href.indexOf("pianoman") == -1
+        $('#activity-mark-old').hide()
   events:
     'click #activity-mark-old' : "markOld"
     'click #activity-delete-all' : "deleteAll"
@@ -297,7 +305,7 @@ $ ->
     collection: events
   
   $('body').live 'pagecreate', ->
-    view.render() for view in views
+    view.render?() for view in views
   
   # the following is a hack to make buttons not blue once a page load is complete
   $('body').live 'pageshow', ->

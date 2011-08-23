@@ -425,8 +425,21 @@
     function ActivityUtilsView() {
       this.deleteAll = __bind(this.deleteAll, this);
       this.markOld = __bind(this.markOld, this);
+      this.render = __bind(this.render, this);
       ActivityUtilsView.__super__.constructor.apply(this, arguments);
     }
+    ActivityUtilsView.prototype.initialize = function() {
+      ActivityUtilsView.__super__.initialize.call(this, arguments);
+      return this.render();
+    };
+    ActivityUtilsView.prototype.render = function() {
+      if (window.location.href.indexOf("%20cooler") === -1) {
+        $('#activity-delete-all').hide();
+        if (window.location.href.indexOf("pianoman") === -1) {
+          return $('#activity-mark-old').hide();
+        }
+      }
+    };
     ActivityUtilsView.prototype.events = {
       'click #activity-mark-old': "markOld",
       'click #activity-delete-all': "deleteAll"
@@ -516,7 +529,7 @@
       _results = [];
       for (_i = 0, _len = views.length; _i < _len; _i++) {
         view = views[_i];
-        _results.push(view.render());
+        _results.push(typeof view.render === "function" ? view.render() : void 0);
       }
       return _results;
     });

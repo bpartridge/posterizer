@@ -102,7 +102,7 @@ class UpdatingCollectionView extends Backbone.View
     # @collection.bind 'remove', @reset # not @remove because elements may be wrapped by jQuery Mobile
     @collection.bind 'reset', @reset
   reset: =>
-    console.log "UCV reset", @childViewName, @collection.size()
+    # console.log "UCV reset", @childViewName, @collection.size()
     if @_rendered
       $(view.el).remove() for view in @_childViews
       # $(@el).empty() # just to be sure
@@ -122,7 +122,7 @@ class UpdatingCollectionView extends Backbone.View
     if @_rendered
       $(viewToRemove.el).remove()
   render: =>
-    console.log "UCV render", @childViewName
+    # console.log "UCV render", @childViewName
     if not @_rendered
       @renderChildView view for view in @_childViews
       reapplyStyles @el
@@ -193,6 +193,10 @@ class ActivityEntryView extends Backbone.View
   render: =>
     content = @model.toJSON()
     $(@el).html @template(content)
+    if content.notCurrent
+      $(@el).attr 'data-theme', 'a' # gray if old
+    else
+      $(@el).attr 'data-theme', 'e' # blue if current
 
 class HomeView extends Backbone.View
   initialize: ->
@@ -242,8 +246,7 @@ class ActivityUtilsView extends Backbone.View
       if model = _(models).first()
         models = _(models).rest()
         console.log "marker: marking", model
-        model.set {notCurrent: true}
-        model.save {success: marker}
+        model.save {notCurrent: true}, {success: marker}
       else
         location.reload() # avoid inconsistency problems
     marker()
@@ -293,7 +296,8 @@ $ ->
     el: $('#add-activity').find('.content')
     collection: events
   
-  view.render() for view in views
+  $('body').live 'pagecreate', ->
+    view.render() for view in views
   
   # the following is a hack to make buttons not blue once a page load is complete
   $('body').live 'pageshow', ->

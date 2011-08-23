@@ -186,7 +186,6 @@
     };
     UpdatingCollectionView.prototype.reset = function() {
       var view, _i, _len, _ref;
-      console.log("UCV reset", this.childViewName, this.collection.size());
       if (this._rendered) {
         _ref = this._childViews;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -226,7 +225,6 @@
     };
     UpdatingCollectionView.prototype.render = function() {
       var view, _i, _len, _ref;
-      console.log("UCV render", this.childViewName);
       if (!this._rendered) {
         _ref = this._childViews;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -344,7 +342,12 @@
     ActivityEntryView.prototype.render = function() {
       var content;
       content = this.model.toJSON();
-      return $(this.el).html(this.template(content));
+      $(this.el).html(this.template(content));
+      if (content.notCurrent) {
+        return $(this.el).attr('data-theme', 'a');
+      } else {
+        return $(this.el).attr('data-theme', 'e');
+      }
     };
     return ActivityEntryView;
   })();
@@ -436,10 +439,9 @@
         if (model = _(models).first()) {
           models = _(models).rest();
           console.log("marker: marking", model);
-          model.set({
-            notCurrent: true
-          });
           return model.save({
+            notCurrent: true
+          }, {
             success: marker
           });
         } else {
@@ -470,7 +472,7 @@
     return ActivityUtilsView;
   })();
   $(function() {
-    var events, tasks, users, view, views, _i, _len;
+    var events, tasks, users, views;
     views = [];
     views.push(new HomeView({
       el: $('#home').find('.content')
@@ -509,10 +511,15 @@
       el: $('#add-activity').find('.content'),
       collection: events
     }));
-    for (_i = 0, _len = views.length; _i < _len; _i++) {
-      view = views[_i];
-      view.render();
-    }
+    $('body').live('pagecreate', function() {
+      var view, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = views.length; _i < _len; _i++) {
+        view = views[_i];
+        _results.push(view.render());
+      }
+      return _results;
+    });
     return $('body').live('pageshow', function() {
       return $('.ui-btn-active').removeClass('ui-btn-active');
     });

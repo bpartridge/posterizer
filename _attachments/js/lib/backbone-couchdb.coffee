@@ -53,7 +53,7 @@ Backbone.couch_connector = con =
   read_collection : (coll, opts) ->
     _view = @config.view_name
     keys = [@helpers.extract_collection_name coll]
-    console.log "keys", keys, @helpers.extract_collection_name(coll)
+    # console.log "keys", keys, @helpers.extract_collection_name(coll)
     if coll.db?
       coll.listen_to_changes() if coll.db.changes or @config.global_changes
       if coll.db.view?
@@ -70,7 +70,7 @@ Backbone.couch_connector = con =
         opts.success _temp
       error : ->
         opts.error()
-    if opts.group or coll.db.group
+    if opts?.group or coll.db?.group
       _opts.group = true
 
     # delete keys if a custom view is requested but no custom keys 

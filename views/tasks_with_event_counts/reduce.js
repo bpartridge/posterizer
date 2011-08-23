@@ -1,16 +1,22 @@
 function(keys, values, rereduce) {
-  var count = 0, task = null, i = 0, len = values.length, val;
-  for (; i < len; i += 1) {
-    val = values[i];
-    if (!val) { count += 1; }
-    else {
-      // assume it's the task dictionary
-      task = task || val;
-      if (val.eventCount) count += parseInt(val.eventCount);
+  // try {
+    var count = 0, task = null, i = 0, len = values.length, val;
+    for (; i < len; i += 1) {
+      val = values[i];
+      if (new RegExp("\\d+").test(val.toString())) { count += parseInt(val); }
+      else {
+        // assume it's the task dictionary
+        task = task || val;
+        if (val.eventCount) count += parseInt(val.eventCount);
+      }
     }
-  }
-  if (task) { task.eventCount = count; }
-  return task || count;
+    if (task) { task.eventCount = count; }
+    return task || count;
+  // }
+  // catch (err)
+  // {
+  //   return err
+  // }
 };
 
 /*

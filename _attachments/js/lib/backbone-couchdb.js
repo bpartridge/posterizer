@@ -60,10 +60,9 @@
       }
     },
     read_collection: function(coll, opts) {
-      var keys, _opts, _view;
+      var keys, _opts, _ref, _view;
       _view = this.config.view_name;
       keys = [this.helpers.extract_collection_name(coll)];
-      console.log("keys", keys, this.helpers.extract_collection_name(coll));
       if (coll.db != null) {
         if (coll.db.changes || this.config.global_changes) {
           coll.listen_to_changes();
@@ -91,7 +90,7 @@
           return opts.error();
         }
       };
-      if (opts.group || coll.db.group) {
+      if ((opts != null ? opts.group : void 0) || ((_ref = coll.db) != null ? _ref.group : void 0)) {
         _opts.group = true;
       }
       if ((coll.db != null) && (coll.db.view != null) && !(coll.db.keys != null)) {

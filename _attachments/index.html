@@ -10,7 +10,7 @@
 <body>
   <div data-role="page" id="home" data-theme="a">
     <div data-role="header">
-      <h1>Posterizer V2</h1>
+      <h1>Posterizer V2 Test</h1>
     </div>
   	<div data-role="content" class="content">
   	  <h2>Loading...</h2>
@@ -19,13 +19,16 @@
   	      Postering Tasks
   	    </a></li>
   	    <li><a href="#activity">
-  	      Recent Activity <span class="ui-li-aside">Live updates!</span>
+  	      Recent Activity (Live Updates!)
   	    </a></li>
   	    <li><a href="#login">
   	      Choose User
   	    </a></li>
   	  </ul>
   	</div>
+    <div data-role="footer">
+      <h4>QuadTech: Making Things Awesome Since 1901</h4>
+    </div>
   </div><!-- page id="home" -->
   
   <div data-role="page" id="tasks" data-theme="a">
@@ -33,8 +36,8 @@
       <a href="#home" data-direction="reverse" data-icon="home">Home</a>
       <h1>Postering Tasks</h1>
     </div>
-    <div data-role="content" data-filter="true" class="content">
-      <ul id="task-table" data-role="listview" data-theme="a">
+    <div data-role="content" class="content">
+      <ul id="task-table" data-role="listview" data-filter="true" data-theme="a" data-filter-theme="f">
       </ul>
     </div>
   </div><!-- page id="tasks" -->
@@ -45,15 +48,47 @@
       <h1>Did you poster here?</h1>
     </div>
     <div data-role="content" class="content">
+      <div class="desc"></div>
+      <form method="post" action="#add-activity" id="add-activity-form" name="add-activity-form">
+        <input type="submit" value="Submit" data-theme="a" />
+      </form>
+      <a href="#login" class="login-button" data-role="button">Change User</a>
     </div>
   </div><!-- page id="add-event" -->
   
+  <div data-role="page" id="add-activity-result" data-theme="a">
+    <div data-role="header">
+      <a href="#tasks" data-direction="reverse" data-transition="pop">Return to Tasks</a>
+      <h1>Results for Adding Activity</h1>
+    </div>
+    <div data-role="content" class="content">
+      <div class="desc"></div>
+      <a href="#tasks" data-direction="reverse" data-role="button" data-transition="pop">Return To Tasks</a>
+    </div>
+  </div><!-- page id="add-activity-result" -->
+  
   <div data-role="page" id="activity" data-theme="a">
     <div data-role="header">
+      <a href="#home" data-rel="back">Back</a>
       <h1>Recent Activity</h1>
     </div>
     <div data-role="content" data-filter="true" class="content">
-      <ul id="activity">
+      <ul id="activity-list" data-role="listview" data-inset="true" data-theme="a">
+      </ul>
+      <div id="activity-utils">
+        <a href="#activity" data-role="button" id="activity-mark-old">Mark All As Old</a>
+        <a href="#activity" data-role="button" id="activity-delete-all">Delete All</a>
+      </div>
+    </div>
+  </div>
+  
+  <div data-role="page" id="login" data-theme="a">
+    <div data-role="header">
+      <a href="#home" data-rel="back" data-icon="delete">Cancel</a>
+      <h1>Who are you?</h1>
+    </div>
+    <div data-role="content" class="content">
+      <ul id="user-select" data-role="listview" data-theme="a">
       </ul>
     </div>
   </div>
@@ -62,7 +97,16 @@
     <li id="task-table-entry-template">
       <a href="#add-activity">
         <span class="title">{{title}}</span>
-        <span class="ui-li-count">{{eventCount}}</span>
+        <span class="ui-li-count">{{eventCount || 0}}</span>
+      </a>
+    </li>
+    <li id="activity-entry-template">
+      <h3 class="ui-li-heading">{{user_name}} postered for: {{task_title}}</h3>
+      <p class="ui-li-desc">{{timestamp}}, current = {{!notCurrent}}</p>
+    </li>
+    <li id="user-select-entry-template">
+      <a href="#login" data-rel="back">
+        <span class="user_name">{{name}}</span>
       </a>
     </li>
   </div><!-- templates -->

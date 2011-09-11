@@ -22,6 +22,18 @@ Backbone.couch_connector.config.ddoc_name = 'app'
 # Enables Mustache.js-like templating.
 _.templateSettings = `{interpolate : /\{\{(.+?)\}\}/g}`
 
+
+hasCookie = (sKey) ->
+  re = new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")
+  re.test(document.cookie)
+
+getCookie = (sKey) ->
+  if (!sKey || !hasCookie(sKey))
+    null
+  unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + 
+    escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + 
+    "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+
 reapplyStyles = (child) ->
   el = $(child).closest('[data-role="page"]')
   # console.log "reapplyStyles", child, el
@@ -42,8 +54,10 @@ class State extends Backbone.Model
     task_title: 'unknown'
   initialize: ->
     @bind 'all', -> console.log arguments # for debugging
+  storeToCookie: =>
+    document.cookie = "posterizer_state=#{encodeURIComponent @toJSON}"
 
-state = new State
+state = new State(getCookie('posterizer_state'))
 
 class User extends Backbone.Model
 class UserCollection extends Backbone.Collection
@@ -183,6 +197,7 @@ class TaskEventAddView extends Backbone.View
       task_title: state.get 'task_title'
       user_id: state.get 'user_id'
       user_name: state.get 'user_name'
+      count: parseInt @$('#slider').val()
     @collection.create attributes,
       success: @success
       error: @error
@@ -210,6 +225,7 @@ class ActivityEntryView extends Backbone.View
     @render()
   render: =>
     content = @model.toJSON()
+    content.count ||= 1
     $(@el).html @template(content)
     if content.notCurrent
       $(@el).attr 'data-theme', 'a' # gray if old

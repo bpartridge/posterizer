@@ -1,16 +1,27 @@
 (function() {
-  var ActivityEntryView, ActivityUtilsView, ActivityView, HomeView, State, Task, TaskEvent, TaskEventAddView, TaskEventCollection, TaskTableEntryView, TaskTableView, TasksWithEventCounts, UpdatingCollectionView, User, UserCollection, UserSelectEntryView, UserSelectView, reapplyStyles, state;
-  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+  var ActivityEntryView, ActivityUtilsView, ActivityView, HomeView, State, Task, TaskEvent, TaskEventAddView, TaskEventCollection, TaskTableEntryView, TaskTableView, TasksWithEventCounts, UpdatingCollectionView, User, UserCollection, UserSelectEntryView, UserSelectView, getCookie, hasCookie, reapplyStyles, state;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
     ctor.prototype = parent.prototype;
     child.prototype = new ctor;
     child.__super__ = parent.prototype;
     return child;
-  }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  };
   Backbone.couch_connector.config.db_name = 'posters';
   Backbone.couch_connector.config.ddoc_name = 'app';
   _.templateSettings = {interpolate : /\{\{(.+?)\}\}/g};
+  hasCookie = function(sKey) {
+    var re;
+    re = new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=");
+    return re.test(document.cookie);
+  };
+  getCookie = function(sKey) {
+    if (!sKey || !hasCookie(sKey)) {
+      null;
+    }
+    return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+  };
   reapplyStyles = function(child) {
     var el;
     el = $(child).closest('[data-role="page"]');
@@ -27,6 +38,7 @@
   State = (function() {
     __extends(State, Backbone.Model);
     function State() {
+      this.storeToCookie = __bind(this.storeToCookie, this);
       State.__super__.constructor.apply(this, arguments);
     }
     State.prototype.defaults = {
@@ -40,9 +52,12 @@
         return console.log(arguments);
       });
     };
+    State.prototype.storeToCookie = function() {
+      return document.cookie = "posterizer_state=" + (encodeURIComponent(this.toJSON));
+    };
     return State;
   })();
-  state = new State;
+  state = new State(getCookie('posterizer_state'));
   User = (function() {
     __extends(User, Backbone.Model);
     function User() {
@@ -297,7 +312,8 @@
         task_id: state.get('task_id'),
         task_title: state.get('task_title'),
         user_id: state.get('user_id'),
-        user_name: state.get('user_name')
+        user_name: state.get('user_name'),
+        count: parseInt(this.$('#slider').val())
       };
       this.collection.create(attributes, {
         success: this.success,
@@ -342,6 +358,7 @@
     ActivityEntryView.prototype.render = function() {
       var content;
       content = this.model.toJSON();
+      content.count || (content.count = 1);
       $(this.el).html(this.template(content));
       if (content.notCurrent) {
         return $(this.el).attr('data-theme', 'a');

@@ -19,7 +19,7 @@
   	  <h2>Loading...</h2>
   	  <ul data-role="listview" data-inset="true" data-theme="a">
   	    <li><a href="#tasks">
-  	      Postering Tasks
+  	      Postering Locations
   	    </a></li>
   	    <li><a href="#activity">
   	      Recent Activity (Live Updates!)
@@ -37,7 +37,7 @@
   <div data-role="page" id="tasks" data-theme="a">
     <div data-role="header">
       <a href="#home" data-direction="reverse" data-icon="home">Home</a>
-      <h1>Postering Tasks</h1>
+      <h1>Postering Locations</h1>
     </div>
     <div data-role="content" class="content">
       <ul id="task-table" data-role="listview" data-filter="true" data-theme="a" data-filter-theme="f">
@@ -48,25 +48,29 @@
   <div data-role="page" id="add-activity" data-theme="a">
     <div data-role="header">
       <a href="#tasks" data-rel="back" data-icon="delete">Cancel</a>
-      <h1>Did you poster here?</h1>
+      <h1>Did you poster?</h1>
     </div>
     <div data-role="content" class="content">
       <div class="desc"></div>
+      <div data-role="fieldcontain">
+      	<label for="slider"># Posters</label>
+       	<input type="range" name="slider" id="slider" value="1" min="1" max="33"  />
+      </div>
+      <a href="#login" class="login-button" data-role="button">Change User</a>
       <form method="post" action="#add-activity" id="add-activity-form" name="add-activity-form">
         <input type="submit" value="Submit" data-theme="a" />
       </form>
-      <a href="#login" class="login-button" data-role="button">Change User</a>
     </div>
   </div><!-- page id="add-event" -->
   
   <div data-role="page" id="add-activity-result" data-theme="a">
     <div data-role="header">
-      <a href="#tasks" data-direction="reverse" data-transition="pop">Return to Tasks</a>
+      <a href="#tasks" data-direction="reverse" data-transition="pop">Return to Locations</a>
       <h1>Results for Adding Activity</h1>
     </div>
     <div data-role="content" class="content">
       <div class="desc"></div>
-      <a href="#tasks" data-direction="reverse" data-role="button" data-transition="pop">Return To Tasks</a>
+      <a href="#tasks" data-direction="reverse" data-role="button" data-transition="pop">Return To Locations</a>
       <a href="#activity" data-role="button" data-transition="pop">View Recent Activity</a>
     </div>
   </div><!-- page id="add-activity-result" -->
@@ -105,7 +109,7 @@
       </a>
     </li>
     <li id="activity-entry-template">
-      <h3 class="ui-li-heading">{{user_name}} postered for: {{task_title}}</h3>
+      <h3 class="ui-li-heading">{{user_name}} postered {{count || 1}}x at: {{task_title}}</h3>
       <p class="ui-li-desc">{{timestamp}}, current = {{!notCurrent}}</p>
     </li>
     <li id="user-select-entry-template">

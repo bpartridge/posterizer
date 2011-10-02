@@ -54,20 +54,27 @@ class State extends Backbone.Model
     task_title: 'unknown'
   initialize: ->
     @bind 'all', -> console.log arguments # for debugging
+    @bind 'all', @storeToCookie
   storeToCookie: =>
-    document.cookie = "posterizer_state=#{encodeURIComponent @toJSON}"
+    document.cookie = "posterizer_state=#{encodeURIComponent JSON.stringify(this)}"
 
-state = new State(getCookie('posterizer_state'))
+try
+  state_json = JSON.parse(getCookie('posterizer_state'))
+catch ex
+  state_json = {}
+state = new State(state_json)
 
 class User extends Backbone.Model
 class UserCollection extends Backbone.Collection
   model: User
   url: '/users'
+  comparator: (user) -> user.get 'name'
 
 class Task extends Backbone.Model
   defaults:
     type: 'task'
     title: 'Untitled Task'
+    assigned: ''
     eventCount: 0
 
 class TasksWithEventCounts extends Backbone.Collection
@@ -134,7 +141,7 @@ class UpdatingCollectionView extends Backbone.View
     # @collection.bind 'remove', @reset # not @remove because elements may be wrapped by jQuery Mobile
     @collection.bind 'reset', @reset
   reset: =>
-    # console.log "UCV reset", @childViewName, @collection.size()
+    # console.log "UCV reset", @childViewName, @collection.map (item) -> item.get('name') || item.id
     if @_rendered
       $(view.el).remove() for view in @_childViews
       # $(@el).empty() # just to be sure
@@ -312,7 +319,9 @@ $ ->
     el: $('#home').find('.content')
   
   tasks = new TasksWithEventCounts  
-  tasks.fetch()
+  tasks.fetch
+    success: (collection, response) ->
+      collection.reset(collection.reject (item) -> !item.id)
   views.push new TaskTableView
     el: $('#task-table')
     collection: tasks

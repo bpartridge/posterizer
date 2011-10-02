@@ -6,9 +6,9 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
   <script src="http://code.jquery.com/jquery-1.6.2.js"></script>
   <script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.js"></script>
-  <meta name="apple-touch-fullscreen" content="yes" />
+  <!-- <meta name="apple-touch-fullscreen" content="yes" /> -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> -->
 </head>
 <body>
   <div data-role="page" id="home" data-theme="a">
@@ -104,7 +104,8 @@
   <div id="templates" style="display:none">
     <li id="task-table-entry-template">
       <a href="#add-activity">
-        <span class="title">{{title}}</span>
+        <h3>{{title}}</h3>
+        <p>{{assigned}}</p>
         <span class="ui-li-count">{{eventCount || 0}}</span>
       </a>
     </li>

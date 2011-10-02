@@ -1,5 +1,5 @@
 (function() {
-  var ActivityEntryView, ActivityUtilsView, ActivityView, HomeView, State, Task, TaskEvent, TaskEventAddView, TaskEventCollection, TaskTableEntryView, TaskTableView, TasksWithEventCounts, UpdatingCollectionView, User, UserCollection, UserSelectEntryView, UserSelectView, getCookie, hasCookie, reapplyStyles, state;
+  var ActivityEntryView, ActivityUtilsView, ActivityView, HomeView, State, Task, TaskEvent, TaskEventAddView, TaskEventCollection, TaskTableEntryView, TaskTableView, TasksWithEventCounts, UpdatingCollectionView, User, UserCollection, UserSelectEntryView, UserSelectView, getCookie, hasCookie, reapplyStyles, state, state_json;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -48,16 +48,22 @@
       task_title: 'unknown'
     };
     State.prototype.initialize = function() {
-      return this.bind('all', function() {
+      this.bind('all', function() {
         return console.log(arguments);
       });
+      return this.bind('all', this.storeToCookie);
     };
     State.prototype.storeToCookie = function() {
-      return document.cookie = "posterizer_state=" + (encodeURIComponent(this.toJSON));
+      return document.cookie = "posterizer_state=" + (encodeURIComponent(JSON.stringify(this)));
     };
     return State;
   })();
-  state = new State(getCookie('posterizer_state'));
+  try {
+    state_json = JSON.parse(getCookie('posterizer_state'));
+  } catch (ex) {
+    state_json = {};
+  }
+  state = new State(state_json);
   User = (function() {
     __extends(User, Backbone.Model);
     function User() {
@@ -72,6 +78,9 @@
     }
     UserCollection.prototype.model = User;
     UserCollection.prototype.url = '/users';
+    UserCollection.prototype.comparator = function(user) {
+      return user.get('name');
+    };
     return UserCollection;
   })();
   Task = (function() {
@@ -82,6 +91,7 @@
     Task.prototype.defaults = {
       type: 'task',
       title: 'Untitled Task',
+      assigned: '',
       eventCount: 0
     };
     return Task;
@@ -508,7 +518,13 @@
       el: $('#home').find('.content')
     }));
     tasks = new TasksWithEventCounts;
-    tasks.fetch();
+    tasks.fetch({
+      success: function(collection, response) {
+        return collection.reset(collection.reject(function(item) {
+          return !item.id;
+        }));
+      }
+    });
     views.push(new TaskTableView({
       el: $('#task-table'),
       collection: tasks
